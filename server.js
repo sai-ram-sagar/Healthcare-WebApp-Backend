@@ -115,14 +115,18 @@ app.post('/api/symptom-checker', (req, res) => {
 
 // API to get the list of available symptoms
 app.get('/api/symptoms-list', (req, res) => {
-    const stmt = healthcareDB.all('SELECT name FROM symptoms', [], (err, rows) => {
-        const rows = stmt.all();
-        if (err) return res.status(500).json({ error: err.message });
+    try {
+        const stmt = healthcareDB.prepare('SELECT name FROM symptoms');
+        const rows = stmt.all(); // Correct usage of .all() in better-sqlite3
 
         const symptomsList = rows.map(row => row.name);
         res.json({ symptoms: symptomsList });
-    });
+    } catch (err) {
+        console.error('Database query error:', err.message);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
 });
+
 
 // -----------------------------------------Food Search Feature----------------------------------------------
 
