@@ -1,0 +1,8 @@
+[phases.setup]
+nixPkgs = ["nodejs-22_x", "python310"]
+
+[phases.build]
+cmds = ["npm install"]
+
+[phases.start]
+cmds = ["npm start"]

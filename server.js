@@ -5,7 +5,6 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const bodyParser = require('body-parser');
 const levenshtein = require('fast-levenshtein');
-// const webPush = require("web-push");
 const fetch = require('node-fetch'); // Import fetch
 require("dotenv").config();
 
@@ -35,10 +34,6 @@ const healthcareDB = new sqlite3.Database('./healthcare.db', sqlite3.OPEN_READWR
     else console.log('Connected to healthcare.db.');
 });
 
-// const remindersDB = new sqlite3.Database('./reminders.db', sqlite3.OPEN_READWRITE | sqlite3.OPEN_CREATE, (err) => {
-//     if (err) console.error('Error connecting to reminders database:', err.message);
-//     else console.log('Connected to reminders.db.');
-// });
 
 // -----------------------------------------Authentication----------------------------------------------
 
@@ -238,99 +233,6 @@ app.post("/api/bmr", (req, res) => {
         res.json({ bmr, daily_calorie_limit });
     });
 });
-
-// // -----------------------------------------Health Reminder Feature----------------------------------------------
-// const VAPID_KEYS = {
-//   publicKey: process.env.PUBLIC_VAPID_KEY,
-//   privateKey: process.env.PRIVATE_VAPID_KEY,
-// };
-
-// webPush.setVapidDetails(
-//   "mailto:your-email@example.com",
-//   VAPID_KEYS.publicKey,
-//   VAPID_KEYS.privateKey
-// ); 
-
-// // Store user subscriptions in remainders.db
-// app.post("/subscribe", (req, res) => {
-//     console.log("Received Subscription:", req.body);
-    
-//     const { endpoint, keys } = req.body;
-//     if (!endpoint || !keys?.p256dh || !keys?.auth) {
-//         return res.status(400).json({ error: "Invalid subscription object" });
-//     }
-
-//     const query = `INSERT INTO subscriptions (endpoint, keys) VALUES (?, ?)`;
-//     remaindersDB.run(query, [endpoint, JSON.stringify(keys)], function (err) {
-//         if (err) {
-//             console.error("Error saving subscription:", err.message);
-//             return res.status(500).json({ error: "Database error" });
-//         }
-//         res.status(201).json({ message: "Subscribed!" });
-//     });
-// });
-
-// // Store reminders in remainders.db
-// app.post("/set-reminder", (req, res) => {
-//     const { time, message } = req.body;
-//     console.log("Reminder Request:", req.body);
-
-//     const reminderTime = new Date(time);
-//     if (isNaN(reminderTime)) {
-//         return res.status(400).json({ error: "Invalid date format" });
-//     }
-
-//     const delay = reminderTime - new Date();
-//     console.log(delay)
-//     if (delay <= 0) {
-//         return res.status(400).json({ error: "Time must be in the future" });
-//     }
-
-//     // Insert reminder into SQLite database
-//     const query = `INSERT INTO reminders (time, message) VALUES (?, ?)`;
-//     remaindersDB.run(query, [reminderTime.toISOString(), message], function (err) {
-//         if (err) {
-//             console.error("Error saving reminder:", err.message);
-//             return res.status(500).json({ error: "Database error" });
-//         }
-
-//         setTimeout(() => {
-//             console.log('test')
-//             sendNotification(message);
-//         }, delay);
-
-//         res.json({ message: "Reminder saved!" });
-//     });
-// });
-
-
-// // Send Push Notification
-// function sendNotification(message) {
-//     remaindersDB.all('SELECT * FROM subscriptions', [], (err, rows) => {
-//         if (err) {
-//             console.error("Error fetching subscriptions:", err.message);
-//             return;
-//         }
-//    console.log(rows)
-//         rows.forEach(sub => {
-//             try {
-//                 const subscription = {
-//                     endpoint: sub.endpoint,
-//                     keys: JSON.parse(sub.keys) // Ensure it's valid JSON
-//                 };
-//                 console.log("Received Subscription:", subscription);
-
-//                 webPush.sendNotification(subscription, message)
-//                     .catch(err => console.error("Push Notification Error:", err));
-
-//             } catch (error) {
-//                 console.error("Error parsing subscription keys:", error.message);
-//             }
-//         });
-//     });
-// }
-
-// Start server
 
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
