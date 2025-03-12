@@ -1,5 +1,5 @@
 const express = require('express');
-const sqlite3 = require('sqlite3').verbose();
+const Database = require('better-sqlite3');
 const cors = require('cors');
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
@@ -17,15 +17,21 @@ app.use(bodyParser.json());
 app.use(express.json());
 
 // Database connections
-const healthcareDB = new sqlite3.Database('./healthcare.db', sqlite3.OPEN_READWRITE, (err) => {
-    if (err) console.error('Error connecting to healthcare database:', err.message);
-    else console.log('Connected to healthcare.db.');
-});
+let healthcareDB, remaindersDB;
 
-const remaindersDB = new sqlite3.Database('./reminders.db', sqlite3.OPEN_READWRITE | sqlite3.OPEN_CREATE, (err) => {
-    if (err) console.error('Error connecting to remainders database:', err.message);
-    else console.log('Connected to remainders.db.');
-});
+try {
+    healthcareDB = new Database('./healthcare.db', { fileMustExist: true });
+    console.log('Connected to healthcare.db.');
+} catch (err) {
+    console.error('Error connecting to healthcare database:', err.message);
+}
+
+try {
+    remaindersDB = new Database('./reminders.db');
+    console.log('Connected to reminders.db.');
+} catch (err) {
+    console.error('Error connecting to reminders database:', err.message);
+}
 
 // -----------------------------------------Authentication----------------------------------------------
 
