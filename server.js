@@ -5,16 +5,22 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const bodyParser = require('body-parser');
 const levenshtein = require('fast-levenshtein');
-const webPush = require("web-push");
+// const webPush = require("web-push");
 require("dotenv").config();
 
 const app = express();
 const PORT = process.env.PORT || 5000;
 
 // Middleware
-app.use(cors());
+// app.use(cors());
+app.use(cors({
+    origin: 'https://earnest-tulumba-ce680a.netlify.app', 
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+     credentials: true
+  }));
 app.use(bodyParser.json());
-app.use(express.json());
+// app.use(express.json());
 
 // Database connections
 let healthcareDB, remaindersDB;
