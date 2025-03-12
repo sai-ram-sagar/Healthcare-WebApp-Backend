@@ -1,23 +1,31 @@
 const express = require('express');
-const sqlite3 = require('sqlite3').verbose();const cors = require('cors');
+const sqlite3 = require('sqlite3').verbose();
+const cors = require('cors');
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const bodyParser = require('body-parser');
 const levenshtein = require('fast-levenshtein');
 // const webPush = require("web-push");
+const fetch = require('node-fetch'); // Import fetch
 require("dotenv").config();
 
 const app = express();
 const PORT = process.env.PORT || 5000;
 
+// Ensure JWT_SECRET is set
+if (!process.env.JWT_SECRET) {
+    console.error("Error: Missing JWT_SECRET in environment variables.");
+    process.exit(1);
+}
+
 // Middleware
 // app.use(cors());
 app.use(cors({
-    origin: 'https://earnest-tulumba-ce680a.netlify.app', 
+    origin: 'https://earnest-tulumba-ce680a.netlify.app',
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     allowedHeaders: ['Content-Type', 'Authorization'],
-     credentials: true
-  }));
+    credentials: true
+}));
 app.use(bodyParser.json());
 // app.use(express.json());
 
