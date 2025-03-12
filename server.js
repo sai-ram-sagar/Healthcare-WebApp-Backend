@@ -1,6 +1,5 @@
 const express = require('express');
-const Database = require('better-sqlite3');
-const cors = require('cors');
+const sqlite3 = require('sqlite3').verbose();const cors = require('cors');
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const bodyParser = require('body-parser');
@@ -23,21 +22,15 @@ app.use(bodyParser.json());
 // app.use(express.json());
 
 // Database connections
-let healthcareDB, remaindersDB;
+const healthcareDB = new sqlite3.Database('./healthcare.db', sqlite3.OPEN_READWRITE, (err) => {
+    if (err) console.error('Error connecting to healthcare database:', err.message);
+    else console.log('Connected to healthcare.db.');
+});
 
-try {
-    healthcareDB = new Database('./healthcare.db', { fileMustExist: true });
-    console.log('Connected to healthcare.db.');
-} catch (err) {
-    console.error('Error connecting to healthcare database:', err.message);
-}
-
-try {
-    remaindersDB = new Database('./reminders.db');
-    console.log('Connected to reminders.db.');
-} catch (err) {
-    console.error('Error connecting to reminders database:', err.message);
-}
+// const remindersDB = new sqlite3.Database('./reminders.db', sqlite3.OPEN_READWRITE | sqlite3.OPEN_CREATE, (err) => {
+//     if (err) console.error('Error connecting to reminders database:', err.message);
+//     else console.log('Connected to reminders.db.');
+// });
 
 // -----------------------------------------Authentication----------------------------------------------
 
@@ -115,16 +108,15 @@ app.post('/api/symptom-checker', (req, res) => {
 
 // API to get the list of available symptoms
 app.get('/api/symptoms-list', (req, res) => {
-    try {
-        const stmt = healthcareDB.prepare('SELECT name FROM symptoms');
-        const rows = stmt.all(); // Correct usage of .all() in better-sqlite3
+    healthcareDB.all('SELECT name FROM symptoms', [], (err, rows) => {
+        if (err) {
+            console.error('Database query error:', err.message);
+            return res.status(500).json({ error: 'Internal Server Error' });
+        }
 
         const symptomsList = rows.map(row => row.name);
         res.json({ symptoms: symptomsList });
-    } catch (err) {
-        console.error('Database query error:', err.message);
-        res.status(500).json({ error: 'Internal Server Error' });
-    }
+    });
 });
 
 
