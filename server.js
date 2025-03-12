@@ -115,7 +115,8 @@ app.post('/api/symptom-checker', (req, res) => {
 
 // API to get the list of available symptoms
 app.get('/api/symptoms-list', (req, res) => {
-    healthcareDB.all('SELECT name FROM symptoms', [], (err, rows) => {
+    const stmt = healthcareDB.all('SELECT name FROM symptoms', [], (err, rows) => {
+        const rows = stmt.all();
         if (err) return res.status(500).json({ error: err.message });
 
         const symptomsList = rows.map(row => row.name);
