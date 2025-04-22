@@ -41,7 +41,7 @@ Backend for the **Smart Healthcare Web App** — a full-stack health assistant p
 ### 1. Clone the repo
 
 ```bash
-git clone https://github.com/yourusername/Healthcare-WebApp-Backend.git
+git clone https://github.com/sai-ram-sagar/Healthcare-WebApp-Backend.git
 cd Healthcare-WebApp-Backend
 ```
 
